@@ -1,10 +1,9 @@
 ﻿<template>
   <footer class="footer">
     <p>
-      © {{ year }} Nebula Blog |
-      <RouterLink to="/archive">归档</RouterLink> |
-      <RouterLink to="/about">关于</RouterLink> |
-      <RouterLink to="/links">友链</RouterLink>
+      © {{ year }} &nbsp;·&nbsp;
+      <RouterLink to="/links">友链</RouterLink> &nbsp;·&nbsp;
+      <RouterLink to="/about">关于</RouterLink>
     </p>
   </footer>
 </template>
@@ -32,4 +31,6 @@ const year = new Date().getFullYear()
   color: var(--primary);
 }
 </style>
+
+
 

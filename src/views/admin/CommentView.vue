@@ -20,7 +20,7 @@
           <td>{{ c.articleId }}</td>
           <td>{{ c.nickname }}</td>
           <td>{{ c.content }}</td>
-          <td>{{ c.status }}</td>
+          <td>{{ fmtStatus(c.status) }}</td>
           <td class="actions">
             <button @click="change(c.id, 'approved')">通过</button>
             <button @click="change(c.id, 'rejected')">拒绝</button>
@@ -39,6 +39,8 @@ import { useUiStore } from '@/stores/ui'
 
 const ui = useUiStore()
 const list = ref([])
+const STATUS_MAP = { pending: '待审核', approved: '已通过', rejected: '已拒绝' }
+const fmtStatus = (s) => STATUS_MAP[s] || s
 
 async function load() {
   const res = await commentApi.adminList({ page: 1, size: 100 })

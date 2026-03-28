@@ -14,6 +14,7 @@
         <RouterLink to="/admin/comments">评论管理</RouterLink>
         <RouterLink to="/admin/links">友链管理</RouterLink>
         <RouterLink to="/admin/pages/about">关于页面</RouterLink>
+        <RouterLink to="/admin/settings">网站设置</RouterLink>
       </nav>
 
       <button class="logout" @click="doLogout">退出登录</button>
@@ -76,14 +77,13 @@ function doLogout() {
 .menu-list {
   display: grid;
   gap: 2px;
-  flex: 1;
 }
 
 .menu a {
   text-decoration: none;
   color: #b8caf0;
   font-size: 14px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: 8px;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -99,7 +99,7 @@ function doLogout() {
 }
 
 .logout {
-  margin-top: 14px;
+  margin-top: auto;
   border: 1px solid rgba(223, 234, 255, 0.18);
   color: #b8caf0;
   background: transparent;

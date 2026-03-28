@@ -3,36 +3,30 @@
 
   <div v-if="loading" class="state card">文章加载中...</div>
 
-  <div v-else-if="article" class="article-wrap">
-    <article class="article card">
-      <span v-if="article.categoryName" class="cat-badge">{{ article.categoryName }}</span>
-      <h1>{{ article.title }}</h1>
+  <article v-else-if="article" class="article card">
+    <span v-if="article.categoryName" class="cat-badge">{{ article.categoryName }}</span>
+    <h1>{{ article.title }}</h1>
 
-      <div class="meta">
-        <span>{{ fmt(article.createdAt) }}</span>
-        <span>{{ article.viewCount || 0 }} 阅读</span>
-      </div>
+    <div class="meta">
+      <span>{{ fmt(article.createdAt) }}</span>
+      <span>{{ article.viewCount || 0 }} 阅读</span>
+    </div>
 
-      <div v-if="article.tags && article.tags.length" class="tags">
-        <RouterLink
-          v-for="t in article.tags"
-          :key="t.id"
-          :to="`/tag/${t.id}`"
-          class="tag"
-          :style="{ borderColor: `${t.color || '#0f6bff'}40`, color: t.color || '#0f6bff' }"
-        >#{{ t.name }}</RouterLink>
-      </div>
+    <div v-if="article.tags && article.tags.length" class="tags">
+      <RouterLink
+        v-for="t in article.tags"
+        :key="t.id"
+        :to="`/tag/${t.id}`"
+        class="tag"
+        :style="{ borderColor: `${t.color || '#0f6bff'}40`, color: t.color || '#0f6bff' }"
+      >#{{ t.name }}</RouterLink>
+    </div>
 
-      <div class="article-content" v-html="rendered"></div>
+    <div class="article-content" v-html="rendered"></div>
 
-      <CommentList :comments="comments" />
-      <CommentForm :article-id="Number(article.id)" @submitted="loadComments" />
-    </article>
-
-    <aside class="toc-aside">
-      <TableOfContents :html="rendered" />
-    </aside>
-  </div>
+    <CommentList :comments="comments" />
+    <CommentForm :article-id="Number(article.id)" @submitted="loadComments" />
+  </article>
 
   <div v-else class="state card">文章不存在</div>
 </template>
@@ -141,13 +135,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   pointer-events: none;
 }
 
-.article-wrap {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 20px;
-  align-items: start;
-}
-
 .article {
   padding: 28px;
   min-width: 0;
@@ -196,23 +183,9 @@ h1 {
   text-decoration: none;
 }
 
-.toc-aside {
-  min-width: 0;
-}
-
 .state {
   padding: 22px;
   color: var(--text-muted);
-}
-
-@media (max-width: 1080px) {
-  .article-wrap {
-    grid-template-columns: 1fr;
-  }
-
-  .toc-aside {
-    display: none;
-  }
 }
 </style>
 

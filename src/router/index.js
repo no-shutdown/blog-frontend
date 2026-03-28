@@ -1,5 +1,6 @@
-﻿import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useUiStore } from '@/stores/ui'
 
 import PublicLayout from '@/components/layout/PublicLayout.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
@@ -21,6 +22,7 @@ const AdminTagView = () => import('@/views/admin/TagView.vue')
 const CommentView = () => import('@/views/admin/CommentView.vue')
 const LinkView = () => import('@/views/admin/LinkView.vue')
 const PageEditView = () => import('@/views/admin/PageEditView.vue')
+const SiteSettingsView = () => import('@/views/admin/SiteSettingsView.vue')
 
 const routes = [
   {
@@ -51,7 +53,8 @@ const routes = [
       { path: 'tags', name: 'tags', component: AdminTagView },
       { path: 'comments', name: 'comments', component: CommentView },
       { path: 'links', name: 'adminLinks', component: LinkView },
-      { path: 'pages/about', name: 'pageAbout', component: PageEditView }
+      { path: 'pages/about', name: 'pageAbout', component: PageEditView },
+      { path: 'settings', name: 'siteSettings', component: SiteSettingsView }
     ]
   }
 ]
@@ -62,6 +65,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  const ui = useUiStore()
+  ui.startLoading()
+
   if (to.meta.requiresAuth) {
     const auth = useAuthStore()
     if (!auth.token) {
@@ -69,6 +75,16 @@ router.beforeEach((to) => {
     }
   }
   return true
+})
+
+router.afterEach(() => {
+  const ui = useUiStore()
+  ui.endLoading()
+})
+
+router.onError(() => {
+  const ui = useUiStore()
+  ui.endLoading()
 })
 
 export default router

@@ -1,4 +1,4 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import api from '@/api'
 
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username, password) {
     const res = await api.post('/admin/login', { username, password })
     if (res.code !== 200) {
-      throw new Error(res.message || 'Login failed')
+      throw new Error(res.msg || res.message || 'Login failed')
     }
     setToken(res.data.token, { username })
     return res
@@ -38,3 +38,4 @@ export const useAuthStore = defineStore('auth', () => {
 
   return { token, user, isAuthenticated, setToken, logout, login }
 })
+

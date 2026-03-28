@@ -19,7 +19,7 @@
         <tr v-for="a in list" :key="a.id">
           <td>#{{ a.id }}</td>
           <td>{{ a.title }}</td>
-          <td>{{ a.status }}</td>
+          <td>{{ fmtStatus(a.status) }}</td>
           <td class="actions">
             <RouterLink :to="`/admin/articles/${a.id}`">编辑</RouterLink>
             <button @click="remove(a.id)">删除</button>
@@ -37,6 +37,8 @@ import { useUiStore } from '@/stores/ui'
 
 const ui = useUiStore()
 const list = ref([])
+const STATUS_MAP = { published: '已发布', draft: '草稿' }
+const fmtStatus = (s) => STATUS_MAP[s] || s
 
 async function load() {
   const res = await articleApi.adminList({ page: 1, size: 50 })

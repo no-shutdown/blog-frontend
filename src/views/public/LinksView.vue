@@ -1,23 +1,27 @@
 ﻿<template>
   <div class="links-page">
     <h1 class="page-title">友情链接</h1>
-    <div class="grid">
+    <div class="list">
       <a
         v-for="l in links"
         :key="l.id"
         :href="l.url"
         target="_blank"
         rel="noreferrer"
-        class="link-card card"
+        class="link-row card"
       >
         <div class="avatar-wrap">
           <img v-if="l.avatar" :src="l.avatar" class="avatar" :alt="l.name" />
           <span v-else class="avatar-initial">{{ (l.name || '?')[0] }}</span>
         </div>
         <div class="info">
-          <h3>{{ l.name }}</h3>
-          <p>{{ l.description }}</p>
+          <div class="name-row">
+            <h3>{{ l.name }}</h3>
+            <span class="url">{{ l.url }}</span>
+          </div>
+          <p v-if="l.description" class="desc">{{ l.description }}</p>
         </div>
+        <span class="arrow">↗</span>
       </a>
     </div>
   </div>
@@ -45,24 +49,24 @@ onMounted(async () => {
   margin: 0 0 18px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.link-card {
+.link-row {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
   text-decoration: none;
   color: inherit;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
-.link-card:hover {
-  transform: translateY(-3px);
+.link-row:hover {
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   color: inherit;
 }
@@ -72,8 +76,8 @@ onMounted(async () => {
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--line);
@@ -83,36 +87,60 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: var(--primary-soft);
   color: var(--primary);
   font-weight: 700;
-  font-size: 18px;
+  font-size: 17px;
   border: 2px solid rgba(15, 107, 255, 0.2);
 }
 
 .info {
+  flex: 1;
   min-width: 0;
 }
 
-.info h3 {
-  margin: 0 0 4px;
+.name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+
+.name-row h3 {
+  margin: 0;
   font-size: 15px;
+  white-space: nowrap;
+}
+
+.url {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.info p {
-  margin: 0;
-  font-size: 12px;
+.arrow {
+  flex-shrink: 0;
+  font-size: 16px;
   color: var(--text-muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.5;
+  transition: color 0.15s ease;
+}
+
+.link-row:hover .arrow {
+  color: var(--primary);
 }
 </style>

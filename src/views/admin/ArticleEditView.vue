@@ -14,8 +14,15 @@
       </div>
 
       <div class="field">
-        <label>封面 URL</label>
-        <input v-model="form.coverImage" placeholder="https://..." />
+        <label>封面图片</label>
+        <div class="upload-row">
+          <input v-model="form.coverImage" placeholder="粘贴图片 URL，或点击右侧上传" />
+          <label class="upload-btn">
+            {{ coverUploading ? '上传中...' : '上传图片' }}
+            <input type="file" accept="image/*" :disabled="coverUploading" @change="uploadCover" />
+          </label>
+        </div>
+        <img v-if="form.coverImage" :src="form.coverImage" class="cover-preview" alt="封面预览" />
       </div>
 
       <div class="row">
@@ -31,8 +38,14 @@
       <div class="field">
         <label>标签</label>
         <div class="tags">
-          <label v-for="t in tags" :key="t.id" class="tag-item">
-            <input v-model="form.tagIds" type="checkbox" :value="t.id" />{{ t.name }}
+          <label
+            v-for="t in tags"
+            :key="t.id"
+            class="tag-item"
+            :class="{ selected: form.tagIds.includes(t.id) }"
+          >
+            <input v-model="form.tagIds" type="checkbox" :value="t.id" />
+            {{ t.name }}
           </label>
         </div>
       </div>
@@ -49,8 +62,8 @@
         <div class="field">
           <label>状态</label>
           <select v-model="form.status">
-            <option value="draft">draft</option>
-            <option value="published">published</option>
+            <option value="draft">草稿</option>
+            <option value="published">已发布</option>
           </select>
         </div>
       </div>
@@ -68,18 +81,42 @@ import { useRoute, useRouter } from 'vue-router'
 import { articleApi } from '@/api/article'
 import { categoryApi } from '@/api/category'
 import { tagApi } from '@/api/tag'
+import { adminApi } from '@/api/admin'
+import { useUiStore } from '@/stores/ui'
 import ArticleEditor from '@/components/admin/ArticleEditor.vue'
+
+const ui = useUiStore()
 
 const route = useRoute()
 const router = useRouter()
 const isEdit = computed(() => !!route.params.id)
 const categories = ref([])
 const tags = ref([])
+const coverUploading = ref(false)
+
+async function uploadCover(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  coverUploading.value = true
+  try {
+    const res = await adminApi.uploadImage(file)
+    if (res.code === 200) {
+      form.coverImage = res.data.url
+    } else {
+      ui.notify('上传失败', 'error')
+    }
+  } catch {
+    ui.notify('上传失败', 'error')
+  } finally {
+    coverUploading.value = false
+    e.target.value = ''
+  }
+}
 
 const form = reactive({
   title: '',
   content: '',
-  contentType: 'markdown',
+  contentType: 'html',
   summary: '',
   coverImage: '',
   status: 'draft',
@@ -149,7 +186,7 @@ onMounted(async () => {
   margin-bottom: 12px;
 }
 
-.field label {
+.field > label {
   display: block;
   margin-bottom: 6px;
   font-size: 12px;
@@ -168,14 +205,75 @@ textarea {
 
 .tags {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .tag-item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  user-select: none;
+}
+
+.tag-item:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.tag-item.selected {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.tag-item input {
+  display: none;
+}
+
+.upload-row {
+  display: flex;
+  gap: 8px;
+}
+
+.upload-row input:not([type='file']) {
+  flex: 1;
+}
+
+.upload-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 40px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--primary), #2f8bff);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.upload-btn input[type='file'] {
+  display: none;
+}
+
+.cover-preview {
+  margin-top: 8px;
+  max-height: 140px;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  display: block;
 }
 
 .actions {

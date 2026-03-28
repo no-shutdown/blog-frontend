@@ -1,5 +1,5 @@
 ﻿<template>
-  <article class="article-card card">
+  <article class="article-card card" :class="{ 'has-cover': article.coverImage }">
     <img v-if="article.coverImage" :src="article.coverImage" class="cover" />
 
     <div class="content-wrap">
@@ -23,12 +23,16 @@ const fmt = (v) => (v ? new Date(v).toLocaleDateString('zh-CN') : '-')
 <style scoped>
 .article-card {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   padding: 14px;
   margin-bottom: 14px;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   overflow: hidden;
+}
+
+.article-card.has-cover {
+  grid-template-columns: 220px minmax(0, 1fr);
 }
 
 .article-card:hover {
@@ -50,6 +54,9 @@ const fmt = (v) => (v ? new Date(v).toLocaleDateString('zh-CN') : '-')
 
 .content-wrap {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .cat-badge {
@@ -91,6 +98,7 @@ h2 a:hover {
   gap: 8px;
   color: var(--text-muted);
   font-size: 12px;
+  margin-top: auto;
 }
 
 .meta span {
@@ -109,4 +117,5 @@ h2 a:hover {
   }
 }
 </style>
+
 

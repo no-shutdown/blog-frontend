@@ -3,14 +3,14 @@
     <header class="site-header">
       <div class="inner">
         <RouterLink to="/" class="brand">
-          <span class="dot"></span>
-          <span>Nebula Blog</span>
+          <img v-if="settings.logoUrl" :src="settings.logoUrl" class="logo" alt="logo" />
+          <span v-else class="dot"></span>
+          <span v-if="settings.siteName" class="site-name">{{ settings.siteName }}</span>
         </RouterLink>
         <nav class="nav">
           <RouterLink to="/">首页</RouterLink>
-          <RouterLink to="/archive">归档</RouterLink>
-          <RouterLink to="/about">关于</RouterLink>
           <RouterLink to="/links">友链</RouterLink>
+          <RouterLink to="/about">关于</RouterLink>
         </nav>
       </div>
     </header>
@@ -33,18 +33,20 @@
 import Footer from '@/components/public/Footer.vue'
 import ScrollToTop from '@/components/public/ScrollToTop.vue'
 import Sidebar from '@/components/public/Sidebar.vue'
+import { useSettingsStore } from '@/stores/settings'
+const settings = useSettingsStore()
 </script>
 
 <style scoped>
 .public-shell {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
 }
 
 .site-header {
-  position: sticky;
-  top: 12px;
-  z-index: 30;
+  position: static;
 }
 
 .inner {
@@ -68,6 +70,18 @@ import Sidebar from '@/components/public/Sidebar.vue'
   gap: 10px;
   font-weight: 700;
   letter-spacing: 0.01em;
+  color: #0f172a;
+}
+
+.logo {
+  max-height: 32px;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.site-name {
+  font-size: 16px;
+  font-weight: 700;
   color: #0f172a;
 }
 
@@ -98,27 +112,41 @@ import Sidebar from '@/components/public/Sidebar.vue'
   background: #eaf1ff;
 }
 
-.nav a.router-link-active {
+.nav a.router-link-exact-active {
   color: #0f6bff;
   background: #dce9ff;
 }
 
 .layout-grid {
+  flex: 1;
   max-width: 1240px;
+  width: 100%;
   margin: 18px auto 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 220px;
   gap: 20px;
+  align-items: start;
 }
 
-.main,
+.main {
+  min-width: 0;
+}
+
 .sidebar {
   min-width: 0;
+  position: sticky;
+  top: 12px;
+  align-self: start;
 }
 
 @media (max-width: 1080px) {
   .layout-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    top: auto;
   }
 }
 
@@ -139,4 +167,8 @@ import Sidebar from '@/components/public/Sidebar.vue'
   }
 }
 </style>
+
+
+
+
 

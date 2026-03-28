@@ -9,18 +9,20 @@
         class="stat card"
         :style="{ '--accent': item.color }"
       >
-        <span class="stat-icon">{{ item.icon }}</span>
         <p class="stat-label">{{ item.label }}</p>
         <p class="stat-value">{{ item.value ?? '-' }}</p>
       </div>
     </div>
 
     <div v-if="monthlyData.length" class="chart card">
-      <p class="chart-title">近期月度发文</p>
-      <div class="bars">
-        <div v-for="m in monthlyData" :key="`${m.year}-${m.month}`" class="bar-col">
-          <div class="bar" :style="{ height: `${barHeight(m.count)}%` }" :title="`${m.count} 篇`"></div>
-          <span class="bar-label">{{ m.month }}月</span>
+      <p class="chart-title">近期发文</p>
+      <div class="chart-list">
+        <div v-for="m in monthlyData" :key="`${m.year}-${m.month}`" class="chart-row">
+          <span class="chart-month">{{ m.year }}/{{ String(m.month).padStart(2, '0') }}</span>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" :style="{ width: `${barPct(m.count)}%` }"></div>
+          </div>
+          <span class="chart-count">{{ m.count }} 篇</span>
         </div>
       </div>
     </div>
@@ -38,18 +40,18 @@ const archiveGroups = ref([])
 const items = computed(() => {
   if (!stats.value) return []
   return [
-    { label: '文章总数', value: stats.value.articleCount, icon: '📝', color: '#0f6bff' },
-    { label: '已发布', value: stats.value.publishedCount, icon: '✅', color: '#20b26c' },
-    { label: '草稿', value: stats.value.draftCount, icon: '📄', color: '#f59e0b' },
-    { label: '评论总数', value: stats.value.commentCount, icon: '💬', color: '#8b5cf6' },
-    { label: '待审核评论', value: stats.value.pendingCommentCount, icon: '⏳', color: '#ef4444' },
-    { label: '总浏览量', value: stats.value.totalViewCount, icon: '👀', color: '#0ea5e9' }
+    { label: '文章总数', value: stats.value.articleCount, color: '#0f6bff' },
+    { label: '已发布', value: stats.value.publishedCount, color: '#20b26c' },
+    { label: '草稿', value: stats.value.draftCount, color: '#f59e0b' },
+    { label: '评论总数', value: stats.value.commentCount, color: '#8b5cf6' },
+    { label: '待审核评论', value: stats.value.pendingCommentCount, color: '#ef4444' },
+    { label: '总浏览量', value: stats.value.totalViewCount, color: '#0ea5e9' }
   ]
 })
 
 const monthlyData = computed(() => archiveGroups.value.slice(0, 12))
 const maxCount = computed(() => Math.max(...monthlyData.value.map((m) => m.count), 1))
-const barHeight = (count) => Math.max(8, Math.round((count / maxCount.value) * 100))
+const barPct = (count) => Math.max(4, Math.round((count / maxCount.value) * 100))
 
 onMounted(async () => {
   const [sRes, aRes] = await Promise.all([adminApi.dashboard(), articleApi.archive()])
@@ -89,12 +91,6 @@ onMounted(async () => {
   opacity: 0.1;
 }
 
-.stat-icon {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 8px;
-}
-
 .stat-label {
   margin: 0 0 4px;
   color: var(--text-muted);
@@ -109,47 +105,53 @@ onMounted(async () => {
 }
 
 .chart {
-  padding: 20px;
+  padding: 18px 20px;
 }
 
 .chart-title {
-  margin: 0 0 16px;
-  font-size: 14px;
-  font-weight: 700;
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.bars {
-  display: flex;
-  align-items: flex-end;
+.chart-list {
+  display: grid;
   gap: 8px;
-  height: 120px;
 }
 
-.bar-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.chart-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 48px;
   align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  height: 100%;
+  gap: 10px;
 }
 
-.bar {
-  width: 100%;
-  background: linear-gradient(180deg, var(--primary), #2f8bff);
-  border-radius: 5px 5px 0 0;
-  transition: height 0.4s ease;
-  min-height: 4px;
-}
-
-.bar-label {
-  font-size: 11px;
+.chart-month {
+  font-size: 12px;
   color: var(--text-muted);
-  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-bar-wrap {
+  height: 8px;
+  background: var(--skeleton-bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chart-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #2f8bff);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.chart-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 980px) {
