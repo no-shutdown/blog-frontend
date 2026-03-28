@@ -1,19 +1,34 @@
 ﻿<template>
-  <div class="card">
-    <h2>编辑关于我页面</h2>
-    <form @submit.prevent="save">
-      <input v-model="form.title" placeholder="标题" required />
+  <form class="page-edit" @submit.prevent="save">
+    <div class="section card">
+      <h3 class="section-title">基本信息</h3>
+      <div class="field">
+        <label>标题</label>
+        <input v-model="form.title" required placeholder="请输入页面标题" />
+      </div>
+    </div>
+
+    <div class="section card">
+      <h3 class="section-title">页面内容</h3>
       <ArticleEditor v-model="form.content" v-model:contentType="form.contentType" />
-      <button type="submit">保存</button>
-    </form>
-  </div>
+    </div>
+
+    <div class="section card">
+      <h3 class="section-title">发布</h3>
+      <div class="actions">
+        <button type="submit">保存</button>
+      </div>
+    </div>
+  </form>
 </template>
 
 <script setup>
 import { onMounted, reactive } from 'vue'
 import { pageApi } from '@/api/page'
 import ArticleEditor from '@/components/admin/ArticleEditor.vue'
+import { useUiStore } from '@/stores/ui'
 
+const ui = useUiStore()
 const form = reactive({ title: '', content: '', contentType: 'markdown' })
 
 onMounted(async () => {
@@ -27,12 +42,42 @@ onMounted(async () => {
 
 async function save() {
   await pageApi.update('about', { ...form })
-  alert('保存成功')
+  ui.notify('保存成功', 'success')
 }
 </script>
 
 <style scoped>
-.card { background: #fff; padding: 16px; border-radius: 10px; }
-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; }
-button { margin-top: 8px; padding: 8px 14px; border: 0; border-radius: 6px; background: #1677ff; color: #fff; }
+.page-edit {
+  display: grid;
+  gap: 14px;
+}
+
+.section {
+  padding: 18px 20px;
+  margin-bottom: 0;
+}
+
+.section-title {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+}
+
+.field {
+  margin-bottom: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+}
 </style>

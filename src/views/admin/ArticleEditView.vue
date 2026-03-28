@@ -1,31 +1,65 @@
 ﻿<template>
-  <div class="card">
-    <h2>{{ isEdit ? '编辑文章' : '新建文章' }}</h2>
-    <form @submit.prevent="submit">
-      <input v-model="form.title" required placeholder="标题" />
-      <textarea v-model="form.summary" maxlength="500" placeholder="摘要" />
-      <input v-model="form.coverImage" placeholder="封面 URL" />
+  <form class="article-edit" @submit.prevent="submit">
+    <div class="section card">
+      <h3 class="section-title">基本信息</h3>
+
+      <div class="field">
+        <label>标题</label>
+        <input v-model="form.title" required placeholder="请输入文章标题" />
+      </div>
+
+      <div class="field">
+        <label>摘要</label>
+        <textarea v-model="form.summary" maxlength="500" placeholder="请输入摘要" />
+      </div>
+
+      <div class="field">
+        <label>封面 URL</label>
+        <input v-model="form.coverImage" placeholder="https://..." />
+      </div>
 
       <div class="row">
-        <select v-model="form.status">
-          <option value="draft">draft</option>
-          <option value="published">published</option>
-        </select>
-        <select v-model.number="form.categoryId">
-          <option :value="null">无分类</option>
-          <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
-        </select>
+        <div class="field">
+          <label>分类</label>
+          <select v-model.number="form.categoryId">
+            <option :value="null">无分类</option>
+            <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+          </select>
+        </div>
       </div>
 
-      <div class="tags">
-        <label v-for="t in tags" :key="t.id"><input type="checkbox" :value="t.id" v-model="form.tagIds" />{{ t.name }}</label>
+      <div class="field">
+        <label>标签</label>
+        <div class="tags">
+          <label v-for="t in tags" :key="t.id" class="tag-item">
+            <input v-model="form.tagIds" type="checkbox" :value="t.id" />{{ t.name }}
+          </label>
+        </div>
       </div>
+    </div>
 
+    <div class="section card">
+      <h3 class="section-title">文章内容</h3>
       <ArticleEditor v-model="form.content" v-model:contentType="form.contentType" />
+    </div>
 
-      <button type="submit">保存</button>
-    </form>
-  </div>
+    <div class="section card">
+      <h3 class="section-title">发布设置</h3>
+      <div class="row">
+        <div class="field">
+          <label>状态</label>
+          <select v-model="form.status">
+            <option value="draft">draft</option>
+            <option value="published">published</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit">保存</button>
+      </div>
+    </div>
+  </form>
 </template>
 
 <script setup>
@@ -93,10 +127,65 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.card { background: #fff; padding: 16px; border-radius: 10px; }
-input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; }
-textarea { min-height: 80px; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.tags { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-button { padding: 8px 14px; border: 0; border-radius: 6px; background: #1677ff; color: #fff; cursor: pointer; margin-top: 8px; }
+.article-edit {
+  display: grid;
+  gap: 14px;
+}
+
+.section {
+  padding: 18px 20px;
+  margin-bottom: 0;
+}
+
+.section-title {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+textarea {
+  min-height: 80px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
