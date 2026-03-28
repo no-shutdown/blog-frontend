@@ -70,7 +70,7 @@ Admin panel shares the same problems: plain tables, unstyled login page, bare da
 
 ---
 
-### T3 — Secondary Pages Unification (parallel after T1)
+### T3 — Secondary Pages Unification (parallel after T1; AboutView requires article-content.css from T2)
 
 **Files modified:**
 
@@ -117,14 +117,14 @@ Admin panel shares the same problems: plain tables, unstyled login page, bare da
 - `src/components/layout/AdminLayout.vue`
   - Sidebar active state highlight (primary color background)
   - Unicode icon prefix per nav item (📝 ✏️ 🏷️ 💬 🔗 📄)
-  - Sidebar collapse animation
+  - Sidebar collapse: desktop-only toggle button in header, collapsed state shows icons only (no labels), transition via CSS `width` animation
 
 - `src/views/admin/LoginView.vue`
   - Centered `.card` layout with gradient background matching public frontend
 
 - `src/views/admin/DashboardView.vue`
   - Stats in large-number cards (article count, view count, comment count)
-  - Pure CSS bar chart for monthly article counts
+  - Pure CSS bar chart for monthly article counts; data sourced from existing `articleApi.archive()` which already returns grouped monthly aggregates
 
 - All admin list views (`ArticleListView`, `CategoryView`, `TagView`, `CommentView`, `LinkView`)
   - Table row hover highlight (already in theme.css — ensure applied)
